@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "913755297662",
+    "project_id": "chatapp-fc474",
+    "storage_bucket": "chatapp-fc474.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:913755297662:android:c07e8280ada22fd09cc52f",
+        "android_client_info": {
+          "package_name": "com.simbashi.chat_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "913755297662-j3qgegr6grpu37rv1qhbsuf5ur2c5188.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFEno-9brONvywHmXv4wuruTxDCnr_4N4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "913755297662-j3qgegr6grpu37rv1qhbsuf5ur2c5188.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "913755297662-b99dsbh23cvfbklcuc9lgvmtc32pubqb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.simbashi.chatApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
