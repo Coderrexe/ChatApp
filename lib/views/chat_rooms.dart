@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:chat_app/helper/constants.dart';
+import 'package:chat_app/helper/helper_functions.dart';
 import 'package:chat_app/helper/landing.dart';
 import 'package:chat_app/services/user_authentication.dart';
 import 'package:chat_app/views/search.dart';
@@ -11,6 +13,17 @@ class ChatRooms extends StatefulWidget {
 
 class _ChatRoomsState extends State<ChatRooms> {
   final AuthMethods _authMethods = AuthMethods();
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUserInfo();
+  }
+
+  void getCurrentUserInfo() async {
+    Constants.currentUsername =
+        await SharedPreferencesHelperFunctions.getUsername();
+  }
 
   @override
   Widget build(BuildContext context) {

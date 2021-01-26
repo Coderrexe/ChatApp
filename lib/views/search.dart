@@ -1,7 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:chat_app/helper/constants.dart';
 import 'package:chat_app/services/database_methods.dart';
+import 'package:chat_app/views/chat_page.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -19,17 +21,99 @@ class _SearchPageState extends State<SearchPage> {
   bool _searchButtonClicked = false;
 
   void initSearch() async {
-    await _databaseMethods
-        .getUserByUsername(username: _searchController.text)
-        .then((snapshot) {
-      setState(() {
-        _searchSnapshot = snapshot;
+    if (_searchController.text.isNotEmpty) {
+      await _databaseMethods
+          .getUserByUsername(username: _searchController.text)
+          .then((snapshot) {
+        setState(() {
+          _searchSnapshot = snapshot;
+        });
       });
-    });
+    }
   }
 
-  void initChatroom(String username) {
-    _databaseMethods.createChatRoom(chatRoomId: null, chatRoomMap: null);
+  String getChatRoomId(String a, String b) {
+    if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
+      return '$b\_$a';
+    } else {
+      return '$a\_$b';
+    }
+  }
+
+  void initChatroom({@required String username}) {
+    if (Constants.currentUsername != username) {
+      String chatRoomId = getChatRoomId(username, Constants.currentUsername);
+
+      List<String> users = [username, Constants.currentUsername];
+      Map<String, dynamic> chatRoomMap = {
+        'chatRoomId': chatRoomId,
+        'users': users,
+      };
+
+      _databaseMethods.createChatRoom(
+        chatRoomId: chatRoomId,
+        chatRoomMap: chatRoomMap,
+      );
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatPage(),
+        ),
+      );
+    }
+  }
+
+  Widget searchResultItem({@required String username, @required String email}) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: 24.0,
+        vertical: 16.0,
+      ),
+      child: Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                username,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.0,
+                ),
+              ),
+              Text(
+                email,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.0,
+                ),
+              ),
+            ],
+          ),
+          Spacer(),
+          GestureDetector(
+            onTap: () {
+              initChatroom(username: username);
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              child: Text(
+                'Message',
+                style: TextStyle(
+                  fontSize: 15.0,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget searchResults() {
@@ -38,7 +122,7 @@ class _SearchPageState extends State<SearchPage> {
             shrinkWrap: true,
             itemCount: _searchSnapshot.docs.length,
             itemBuilder: (context, index) {
-              return SearchResultItem(
+              return searchResultItem(
                 username: _searchSnapshot.docs[index].data()['username'],
                 email: _searchSnapshot.docs[index].data()['email'],
               );
@@ -75,6 +159,8 @@ class _SearchPageState extends State<SearchPage> {
                         ),
                         border: InputBorder.none,
                       ),
+                      autocorrect: false,
+                      keyboardType: TextInputType.visiblePassword,
                     ),
                   ),
                   GestureDetector(
@@ -103,66 +189,6 @@ class _SearchPageState extends State<SearchPage> {
             searchResults(),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class SearchResultItem extends StatelessWidget {
-  final String username;
-  final String email;
-
-  SearchResultItem({this.username, this.email});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 24.0,
-        vertical: 16.0,
-      ),
-      child: Row(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                username,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.0,
-                ),
-              ),
-              Text(
-                email,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.0,
-                ),
-              ),
-            ],
-          ),
-          Spacer(),
-          GestureDetector(
-            onTap: () {
-              // initChatroom();
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
-              decoration: BoxDecoration(
-                color: Colors.blue,
-                borderRadius: BorderRadius.circular(30.0),
-              ),
-              child: Text(
-                'Message',
-                style: TextStyle(
-                  fontSize: 15.0,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

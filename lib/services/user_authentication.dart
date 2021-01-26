@@ -10,7 +10,7 @@ class AuthMethods {
     return user != null ? ChatAppUser(userId: user.uid) : null;
   }
 
-  Future loginWithEmailAndPassword({
+  Future<ChatAppUser> loginWithEmailAndPassword({
     @required String email,
     @required String password,
   }) async {
@@ -23,10 +23,11 @@ class AuthMethods {
       return _createChatAppUser(user: firebaseUser);
     } catch (err) {
       print(err.toString());
+      return null;
     }
   }
 
-  Future signupWithEmailAndPassword({
+  Future<ChatAppUser> signupWithEmailAndPassword({
     @required String username,
     @required String email,
     @required String password,
@@ -41,22 +42,25 @@ class AuthMethods {
       return _createChatAppUser(user: firebaseUser);
     } catch (err) {
       print(err.toString());
+      return null;
     }
   }
 
-  Future resetPassword({@required String email}) async {
+  Future<void> resetPassword({@required String email}) async {
     try {
       return await _firebaseAuth.sendPasswordResetEmail(email: email);
     } catch (err) {
       print(err.toString());
+      return null;
     }
   }
 
-  Future logout() async {
+  Future<void> logout() async {
     try {
       return await _firebaseAuth.signOut();
     } catch (err) {
       print(err.toString());
+      return null;
     }
   }
 }

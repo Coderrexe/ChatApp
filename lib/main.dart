@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:chat_app/helper/landing.dart';
+import 'package:chat_app/utils/widgets.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,6 +38,12 @@ class ChatApp extends StatelessWidget {
           }
         },
       ),
+      builder: (context, child) {
+        return ScrollConfiguration(
+          behavior: DisableScrollGlow(),
+          child: child,
+        );
+      },
       debugShowCheckedModeBanner: false,
     );
   }

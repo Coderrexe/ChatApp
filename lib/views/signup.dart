@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:chat_app/helper/helper_functions.dart';
 import 'package:chat_app/services/user_authentication.dart';
 import 'package:chat_app/services/database_methods.dart';
 import 'package:chat_app/utils/widgets.dart';
@@ -28,11 +29,6 @@ class _SignupPageState extends State<SignupPage> {
 
   void registerAccount() async {
     if (_formKey.currentState.validate()) {
-      Map<String, String> userInfoMap = {
-        'username': _usernameController.text,
-        'email': _emailController.text,
-      };
-
       setState(() {
         _isLoading = true;
       });
@@ -43,15 +39,34 @@ class _SignupPageState extends State<SignupPage> {
         email: _emailController.text,
         password: _passwordController.text,
       )
-          .then((value) {
-        _databaseMethods.uploadUserInfo(userInfo: userInfoMap);
+          .then((result) {
+        if (result != null) {
+          Map<String, String> userInfoMap = {
+            'username': _usernameController.text,
+            'email': _emailController.text,
+          };
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatRooms(),
-          ),
-        );
+          _databaseMethods.uploadUserInfo(userInfo: userInfoMap);
+
+          SharedPreferencesHelperFunctions.saveIsUserLoggedIn(
+            isUserLoggedIn: true,
+          );
+
+          SharedPreferencesHelperFunctions.saveUsername(
+            username: _usernameController.text,
+          );
+
+          SharedPreferencesHelperFunctions.saveUserEmail(
+            userEmail: _emailController.text,
+          );
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatRooms(),
+            ),
+          );
+        }
       });
     }
   }
@@ -101,6 +116,8 @@ class _SignupPageState extends State<SignupPage> {
                                   return null;
                                 }
                               },
+                              autocorrect: false,
+                              keyboardType: TextInputType.visiblePassword,
                             ),
                             SizedBox(height: 8.0),
                             TextFormField(
@@ -123,6 +140,8 @@ class _SignupPageState extends State<SignupPage> {
                                   return 'This is not a valid email';
                                 }
                               },
+                              autocorrect: false,
+                              keyboardType: TextInputType.emailAddress,
                             ),
                             SizedBox(height: 8.0),
                             TextFormField(

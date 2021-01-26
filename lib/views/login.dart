@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:chat_app/helper/helper_functions.dart';
 import 'package:chat_app/services/database_methods.dart';
 import 'package:chat_app/services/user_authentication.dart';
 import 'package:chat_app/utils/widgets.dart';
@@ -39,8 +40,21 @@ class _LoginPageState extends State<LoginPage> {
       )
           .then((result) async {
         if (result != null) {
-          QuerySnapshot _userInfoMap = await _databaseMethods.getUserByEmail(
+          QuerySnapshot userInfoSnapshot =
+              await _databaseMethods.getUserByEmail(
             email: _emailController.text,
+          );
+
+          SharedPreferencesHelperFunctions.saveIsUserLoggedIn(
+            isUserLoggedIn: true,
+          );
+
+          SharedPreferencesHelperFunctions.saveUsername(
+            username: userInfoSnapshot.docs[0].data()['username'],
+          );
+
+          SharedPreferencesHelperFunctions.saveUserEmail(
+            userEmail: userInfoSnapshot.docs[0].data()['email'],
           );
 
           Navigator.pushReplacement(
@@ -108,6 +122,8 @@ class _LoginPageState extends State<LoginPage> {
                                   return 'This is not a valid email';
                                 }
                               },
+                              autocorrect: false,
+                              keyboardType: TextInputType.emailAddress,
                             ),
                             SizedBox(height: 8.0),
                             TextFormField(
