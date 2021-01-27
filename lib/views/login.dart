@@ -4,8 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:chat_app/helper/helper_functions.dart';
 import 'package:chat_app/services/database_methods.dart';
 import 'package:chat_app/services/user_authentication.dart';
-import 'package:chat_app/utils/widgets.dart';
 import 'package:chat_app/views/chat_rooms.dart';
+import 'package:chat_app/widgets.dart';
 
 class LoginPage extends StatefulWidget {
   final Function switchToSignupPage;

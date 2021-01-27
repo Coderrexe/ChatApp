@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
+
 class ChatAppUser {
   String userId;
 
-  ChatAppUser({this.userId});
+  ChatAppUser({@required this.userId});
 }

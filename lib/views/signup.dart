@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:chat_app/helper/helper_functions.dart';
 import 'package:chat_app/services/user_authentication.dart';
 import 'package:chat_app/services/database_methods.dart';
-import 'package:chat_app/utils/widgets.dart';
 import 'package:chat_app/views/chat_rooms.dart';
+import 'package:chat_app/widgets.dart';
 
 class SignupPage extends StatefulWidget {
   final Function switchToLoginPage;
@@ -145,23 +145,23 @@ class _SignupPageState extends State<SignupPage> {
                             ),
                             SizedBox(height: 8.0),
                             TextFormField(
-                              controller: _passwordController,
-                              style: TextStyle(color: Colors.white),
-                              decoration: textFieldInputDecoration('Password'),
-                              obscureText: true,
-                              validator: (value) {
-                                if (value.trim().isEmpty && value.isEmpty) {
-                                  return 'Please enter a password';
-                                } else if (value != value.trim()) {
-                                  return 'Password must not contain spaces';
-                                } else if (value.length < 6) {
-                                  return 'Password must be longer than 6 '
-                                      'characters';
-                                } else {
-                                  return null;
-                                }
-                              },
-                            ),
+                                controller: _passwordController,
+                                style: TextStyle(color: Colors.white),
+                                decoration:
+                                    textFieldInputDecoration('Password'),
+                                obscureText: true,
+                                validator: (value) {
+                                  if (value.trim().isEmpty && value.isEmpty) {
+                                    return 'Please enter a password';
+                                  } else if (value != value.trim()) {
+                                    return 'Password must not contain spaces';
+                                  } else if (value.length < 6) {
+                                    return 'Password must be longer than 6 '
+                                        'characters';
+                                  } else {
+                                    return null;
+                                  }
+                                }),
                           ],
                         ),
                       ),

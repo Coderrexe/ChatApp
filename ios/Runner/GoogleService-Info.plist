@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>913755297662-b99dsbh23cvfbklcuc9lgvmtc32pubqb.apps.googleusercontent.com</string>
+	<string>704133146553-djblj4aamen150mpmbm8o4jp38vlhnhq.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.913755297662-b99dsbh23cvfbklcuc9lgvmtc32pubqb</string>
+	<string>com.googleusercontent.apps.704133146553-djblj4aamen150mpmbm8o4jp38vlhnhq</string>
 	<key>API_KEY</key>
-	<string>AIzaSyCrhKDnLwraDMN-sDXMsehAAZnpeiM4K8U</string>
+	<string>AIzaSyBC_ZNlsn03DHXePwC7HfKx-_TzFfMnIi8</string>
 	<key>GCM_SENDER_ID</key>
-	<string>913755297662</string>
+	<string>704133146553</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.simbashi.chatApp</string>
 	<key>PROJECT_ID</key>
-	<string>chatapp-fc474</string>
+	<string>chatapp-2e9ed</string>
 	<key>STORAGE_BUCKET</key>
-	<string>chatapp-fc474.appspot.com</string>
+	<string>chatapp-2e9ed.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:913755297662:ios:fd62339f82ab59469cc52f</string>
+	<string>1:704133146553:ios:c2a7052fde083e8ce63868</string>
 </dict>
 </plist>

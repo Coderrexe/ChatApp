@@ -9,17 +9,17 @@ class Landing extends StatefulWidget {
 }
 
 class _LandingState extends State<Landing> {
-  bool showLoginPage = true;
+  bool _showLoginPage = true;
 
   void togglePage() {
     setState(() {
-      showLoginPage = !showLoginPage;
+      _showLoginPage = !_showLoginPage;
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    if (showLoginPage) {
+    if (_showLoginPage) {
       return LoginPage(togglePage);
     } else {
       return SignupPage(togglePage);

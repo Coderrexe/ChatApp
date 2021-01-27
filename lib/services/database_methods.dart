@@ -20,8 +20,10 @@ class DatabaseMethods {
         .get();
   }
 
-  void createChatRoom(
-      {@required String chatRoomId, @required Map chatRoomMap}) {
+  void createChatRoom({
+    @required String chatRoomId,
+    @required Map<String, dynamic> chatRoomMap,
+  }) {
     FirebaseFirestore.instance
         .collection('chat_rooms')
         .doc(chatRoomId)

@@ -7,7 +7,7 @@ class AuthMethods {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   ChatAppUser _createChatAppUser({@required User user}) {
-    return user != null ? ChatAppUser(userId: user.uid) : null;
+    return ChatAppUser(userId: user.uid);
   }
 
   Future<ChatAppUser> loginWithEmailAndPassword({

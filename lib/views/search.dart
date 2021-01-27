@@ -21,12 +21,17 @@ class _SearchPageState extends State<SearchPage> {
   bool _searchButtonClicked = false;
 
   void initSearch() async {
-    if (_searchController.text.isNotEmpty) {
+    if (_searchController.text.trim().isNotEmpty) {
+      setState(() {
+        _isLoading = true;
+      });
+      await Future.delayed(Duration(milliseconds: 300));
       await _databaseMethods
           .getUserByUsername(username: _searchController.text)
           .then((snapshot) {
         setState(() {
           _searchSnapshot = snapshot;
+          _isLoading = false;
         });
       });
     }
@@ -122,10 +127,13 @@ class _SearchPageState extends State<SearchPage> {
             shrinkWrap: true,
             itemCount: _searchSnapshot.docs.length,
             itemBuilder: (context, index) {
-              return searchResultItem(
-                username: _searchSnapshot.docs[index].data()['username'],
-                email: _searchSnapshot.docs[index].data()['email'],
-              );
+              return _searchSnapshot.docs[index].data()['username'] !=
+                      Constants.currentUsername
+                  ? searchResultItem(
+                      username: _searchSnapshot.docs[index].data()['username'],
+                      email: _searchSnapshot.docs[index].data()['email'],
+                    )
+                  : Container();
             },
           )
         : Container();
@@ -138,58 +146,114 @@ class _SearchPageState extends State<SearchPage> {
         title: Text('Search'),
         centerTitle: true,
       ),
-      body: Container(
-        child: Column(
-          children: <Widget>[
-            Container(
-              color: Color(0x54ffffff),
-              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 10.0),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: TextField(
-                      controller: _searchController,
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Search Username...',
-                        hintStyle: TextStyle(
-                          color: Colors.white54,
+      body: !_isLoading
+          ? Column(
+              children: <Widget>[
+                Container(
+                  color: Color(0x54ffffff),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 10.0,
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'Search Username...',
+                            hintStyle: TextStyle(
+                              color: Colors.white54,
+                            ),
+                            border: InputBorder.none,
+                          ),
+                          autocorrect: false,
+                          keyboardType: TextInputType.visiblePassword,
                         ),
-                        border: InputBorder.none,
                       ),
-                      autocorrect: false,
-                      keyboardType: TextInputType.visiblePassword,
-                    ),
+                      GestureDetector(
+                        onTap: () {
+                          _searchButtonClicked = true;
+                          initSearch();
+                        },
+                        child: Container(
+                          height: 40.0,
+                          width: 40.0,
+                          padding: EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                            color: Color(0x36ffffff),
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                          child: Icon(
+                            Icons.search,
+                            size: 21.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      _searchButtonClicked = true;
-                      initSearch();
-                    },
-                    child: Container(
-                      height: 40.0,
-                      width: 40.0,
-                      padding: EdgeInsets.all(10.0),
-                      decoration: BoxDecoration(
-                        color: Color(0x36ffffff),
-                        borderRadius: BorderRadius.circular(40),
+                ),
+                searchResults(),
+              ],
+            )
+          : Column(
+              children: <Widget>[
+                Container(
+                  color: Color(0x54ffffff),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 24.0, vertical: 10.0),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'Search Username...',
+                            hintStyle: TextStyle(
+                              color: Colors.white54,
+                            ),
+                            border: InputBorder.none,
+                          ),
+                          autocorrect: false,
+                          keyboardType: TextInputType.visiblePassword,
+                        ),
                       ),
-                      child: Icon(
-                        Icons.search,
-                        size: 21.0,
-                        color: Colors.white,
+                      GestureDetector(
+                        onTap: () {
+                          _searchButtonClicked = true;
+                          initSearch();
+                        },
+                        child: Container(
+                          height: 40.0,
+                          width: 40.0,
+                          padding: EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                            color: Color(0x36ffffff),
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                          child: Icon(
+                            Icons.search,
+                            size: 21.0,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                SizedBox(height: 50.0),
+                Container(
+                  child: CircularProgressIndicator(),
+                ),
+              ],
             ),
-            searchResults(),
-          ],
-        ),
-      ),
     );
   }
 }

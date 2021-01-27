@@ -1,6 +1,6 @@
 # chat_app
 
-An instant messaging app, built with Flutter.
+An instant messaging application, built with Flutter.
 
 ## Getting Started
 
