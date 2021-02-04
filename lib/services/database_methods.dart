@@ -29,4 +29,30 @@ class DatabaseMethods {
         .doc(chatRoomId)
         .set(chatRoomMap);
   }
+
+  Stream<QuerySnapshot> getChatRooms({@required String username}) {
+    return FirebaseFirestore.instance
+        .collection('chat_rooms')
+        .where('users', arrayContains: username)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getChatMessages({@required String chatRoomId}) {
+    return FirebaseFirestore.instance
+        .collection('chat_rooms')
+        .doc(chatRoomId)
+        .collection('messages')
+        .orderBy('time')
+        .snapshots();
+  }
+
+  void sendChatMessage(
+      {@required String chatRoomId,
+      @required Map<String, dynamic> messageMap}) {
+    FirebaseFirestore.instance
+        .collection('chat_rooms')
+        .doc(chatRoomId)
+        .collection('messages')
+        .add(messageMap);
+  }
 }

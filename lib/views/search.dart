@@ -20,12 +20,12 @@ class _SearchPageState extends State<SearchPage> {
   bool _isLoading = false;
   bool _searchButtonClicked = false;
 
-  void initSearch() async {
+  void _initSearch() async {
     if (_searchController.text.trim().isNotEmpty) {
       setState(() {
         _isLoading = true;
       });
-      await Future.delayed(Duration(milliseconds: 300));
+      await Future.delayed(Duration(milliseconds: 200));
       await _databaseMethods
           .getUserByUsername(username: _searchController.text)
           .then((snapshot) {
@@ -37,7 +37,7 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  String getChatRoomId(String a, String b) {
+  String _getChatRoomId(String a, String b) {
     if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
       return '$b\_$a';
     } else {
@@ -45,9 +45,9 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  void initChatroom({@required String username}) {
+  void _initChatRoom({@required String username}) {
     if (Constants.currentUsername != username) {
-      String chatRoomId = getChatRoomId(username, Constants.currentUsername);
+      String chatRoomId = _getChatRoomId(username, Constants.currentUsername);
 
       List<String> users = [username, Constants.currentUsername];
       Map<String, dynamic> chatRoomMap = {
@@ -63,13 +63,14 @@ class _SearchPageState extends State<SearchPage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ChatPage(),
+          builder: (context) => ChatPage(chatRoomId: chatRoomId),
         ),
       );
     }
   }
 
-  Widget searchResultItem({@required String username, @required String email}) {
+  Widget _searchResultItem(
+      {@required String username, @required String email}) {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: 24.0,
@@ -99,7 +100,7 @@ class _SearchPageState extends State<SearchPage> {
           Spacer(),
           GestureDetector(
             onTap: () {
-              initChatroom(username: username);
+              _initChatRoom(username: username);
             },
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
@@ -121,7 +122,7 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget searchResults() {
+  Widget _searchResults() {
     return _searchButtonClicked
         ? ListView.builder(
             shrinkWrap: true,
@@ -129,7 +130,7 @@ class _SearchPageState extends State<SearchPage> {
             itemBuilder: (context, index) {
               return _searchSnapshot.docs[index].data()['username'] !=
                       Constants.currentUsername
-                  ? searchResultItem(
+                  ? _searchResultItem(
                       username: _searchSnapshot.docs[index].data()['username'],
                       email: _searchSnapshot.docs[index].data()['email'],
                     )
@@ -145,12 +146,13 @@ class _SearchPageState extends State<SearchPage> {
       appBar: AppBar(
         title: Text('Search'),
         centerTitle: true,
+        elevation: 0,
       ),
       body: !_isLoading
           ? Column(
               children: <Widget>[
                 Container(
-                  color: Color(0x54ffffff),
+                  color: Color(0x54FFFFFF),
                   padding: EdgeInsets.symmetric(
                     horizontal: 24.0,
                     vertical: 10.0,
@@ -177,14 +179,14 @@ class _SearchPageState extends State<SearchPage> {
                       GestureDetector(
                         onTap: () {
                           _searchButtonClicked = true;
-                          initSearch();
+                          _initSearch();
                         },
                         child: Container(
                           height: 40.0,
                           width: 40.0,
                           padding: EdgeInsets.all(10.0),
                           decoration: BoxDecoration(
-                            color: Color(0x36ffffff),
+                            color: Color(0x36FFFFFF),
                             borderRadius: BorderRadius.circular(40),
                           ),
                           child: Icon(
@@ -197,13 +199,13 @@ class _SearchPageState extends State<SearchPage> {
                     ],
                   ),
                 ),
-                searchResults(),
+                _searchResults(),
               ],
             )
           : Column(
               children: <Widget>[
                 Container(
-                  color: Color(0x54ffffff),
+                  color: Color(0x54FFFFFF),
                   padding:
                       EdgeInsets.symmetric(horizontal: 24.0, vertical: 10.0),
                   child: Row(
@@ -228,14 +230,14 @@ class _SearchPageState extends State<SearchPage> {
                       GestureDetector(
                         onTap: () {
                           _searchButtonClicked = true;
-                          initSearch();
+                          _initSearch();
                         },
                         child: Container(
                           height: 40.0,
                           width: 40.0,
                           padding: EdgeInsets.all(10.0),
                           decoration: BoxDecoration(
-                            color: Color(0x36ffffff),
+                            color: Color(0x36FFFFFF),
                             borderRadius: BorderRadius.circular(40),
                           ),
                           child: Icon(

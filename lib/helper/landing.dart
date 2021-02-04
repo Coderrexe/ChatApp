@@ -20,9 +20,9 @@ class _LandingState extends State<Landing> {
   @override
   Widget build(BuildContext context) {
     if (_showLoginPage) {
-      return LoginPage(togglePage);
+      return LoginPage(switchToSignupPage: togglePage);
     } else {
-      return SignupPage(togglePage);
+      return SignupPage(switchToLoginPage: togglePage);
     }
   }
 }

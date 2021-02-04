@@ -9,7 +9,7 @@ import 'package:chat_app/widgets.dart';
 class SignupPage extends StatefulWidget {
   final Function switchToLoginPage;
 
-  SignupPage(this.switchToLoginPage);
+  SignupPage({@required this.switchToLoginPage});
 
   @override
   _SignupPageState createState() => _SignupPageState();
@@ -27,7 +27,7 @@ class _SignupPageState extends State<SignupPage> {
 
   bool _isLoading = false;
 
-  void registerAccount() async {
+  void _registerAccount() async {
     if (_formKey.currentState.validate()) {
       setState(() {
         _isLoading = true;
@@ -77,6 +77,7 @@ class _SignupPageState extends State<SignupPage> {
       appBar: AppBar(
         title: Text('Chat App'),
         centerTitle: true,
+        elevation: 0,
       ),
       resizeToAvoidBottomPadding: false,
       body: _isLoading
@@ -181,19 +182,14 @@ class _SignupPageState extends State<SignupPage> {
                       SizedBox(height: 15.0),
                       GestureDetector(
                         onTap: () {
-                          registerAccount();
+                          _registerAccount();
                         },
                         child: Container(
                           alignment: Alignment.center,
                           width: MediaQuery.of(context).size.width,
                           padding: EdgeInsets.symmetric(vertical: 20.0),
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: <Color>[
-                                Color(0xff007ef4),
-                                Color(0xff2a75bc),
-                              ],
-                            ),
+                            color: Color(0xFF018F7C),
                             borderRadius: BorderRadius.circular(30.0),
                           ),
                           child: Text(

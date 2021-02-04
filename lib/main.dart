@@ -47,8 +47,8 @@ class _ChatAppState extends State<ChatApp> {
     return MaterialApp(
       title: 'Chat App',
       theme: ThemeData(
-        primaryColor: Color(0xff145c9e),
-        scaffoldBackgroundColor: Color(0xff1f1f1f),
+        primaryColor: Color(0xFF03806F),
+        scaffoldBackgroundColor: Color(0xFF1F1F1F),
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
