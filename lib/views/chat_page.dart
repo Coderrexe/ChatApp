@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -30,7 +32,7 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
-  void _sendMessage() {
+  void _sendMessage() async {
     if (_messageController.text.trim().isNotEmpty) {
       Map<String, dynamic> messageMap = {
         'message': _messageController.text,
@@ -84,18 +86,18 @@ class _ChatPageState extends State<ChatPage> {
           FocusScope.of(context).requestFocus(FocusNode());
         },
         child: Container(
-          child: Stack(
+          child: Column(
             children: [
-              _chatMessagesList(),
-              SafeArea(
+              Expanded(child: _chatMessagesList()),
+              Container(
+                alignment: Alignment.bottomCenter,
                 child: Container(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    color: Color(0x54FFFFFF),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 24.0,
-                      vertical: 10.0,
-                    ),
+                  color: Color(0x54FFFFFF),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 10.0,
+                  ),
+                  child: SafeArea(
                     child: Row(
                       children: <Widget>[
                         Expanded(
@@ -174,18 +176,19 @@ class ChatMessage extends StatelessWidget {
             ? EdgeInsets.only(left: 30.0)
             : EdgeInsets.only(right: 30.0),
         decoration: BoxDecoration(
-            color: isSentByCurrentUser ? Color(0xFF03806F) : Color(0x1AFFFFFF),
-            borderRadius: isSentByCurrentUser
-                ? BorderRadius.only(
-                    topLeft: Radius.circular(23.0),
-                    topRight: Radius.circular(23.0),
-                    bottomLeft: Radius.circular(23.0),
-                  )
-                : BorderRadius.only(
-                    topLeft: Radius.circular(23.0),
-                    topRight: Radius.circular(23.0),
-                    bottomRight: Radius.circular(23.0),
-                  )),
+          color: isSentByCurrentUser ? Color(0xFF03806F) : Color(0x1AFFFFFF),
+          borderRadius: isSentByCurrentUser
+              ? BorderRadius.only(
+                  topLeft: Radius.circular(23.0),
+                  topRight: Radius.circular(23.0),
+                  bottomLeft: Radius.circular(23.0),
+                )
+              : BorderRadius.only(
+                  topLeft: Radius.circular(23.0),
+                  topRight: Radius.circular(23.0),
+                  bottomRight: Radius.circular(23.0),
+                ),
+        ),
         child: Text(
           message,
           style: TextStyle(

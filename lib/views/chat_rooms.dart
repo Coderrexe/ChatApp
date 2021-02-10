@@ -68,7 +68,11 @@ class _ChatRoomsState extends State<ChatRooms> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: IconButton(
-              onPressed: () {
+              onPressed: () async {
+                await _authMethods.logout();
+                SharedPreferencesHelperFunctions.saveIsUserLoggedIn(
+                    isUserLoggedIn: false);
+
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -84,8 +88,7 @@ class _ChatRoomsState extends State<ChatRooms> {
         elevation: 0,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await _authMethods.logout();
+        onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(

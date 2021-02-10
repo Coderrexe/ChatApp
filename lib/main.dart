@@ -66,7 +66,9 @@ class _ChatAppState extends State<ChatApp> {
                 : SplashScreen();
           } else {
             return Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF03806F)),
+              ),
             );
           }
         },

@@ -2,29 +2,35 @@ import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseMethods {
-  void uploadUserInfo({@required Map<String, String> userInfo}) {
-    FirebaseFirestore.instance.collection('users').add(userInfo);
+  Future<void> uploadUserInfo({
+    @required Map<String, String> userInfo,
+    @required String userId,
+  }) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .set(userInfo);
   }
 
   Future<QuerySnapshot> getUserByUsername({@required String username}) async {
-    return FirebaseFirestore.instance
+    return await FirebaseFirestore.instance
         .collection('users')
         .where('username', isEqualTo: username)
         .get();
   }
 
   Future<QuerySnapshot> getUserByEmail({@required String email}) async {
-    return FirebaseFirestore.instance
+    return await FirebaseFirestore.instance
         .collection('users')
         .where('email', isEqualTo: email)
         .get();
   }
 
-  void createChatRoom({
+  Future<void> createChatRoom({
     @required String chatRoomId,
     @required Map<String, dynamic> chatRoomMap,
-  }) {
-    FirebaseFirestore.instance
+  }) async {
+    await FirebaseFirestore.instance
         .collection('chat_rooms')
         .doc(chatRoomId)
         .set(chatRoomMap);
@@ -46,10 +52,11 @@ class DatabaseMethods {
         .snapshots();
   }
 
-  void sendChatMessage(
-      {@required String chatRoomId,
-      @required Map<String, dynamic> messageMap}) {
-    FirebaseFirestore.instance
+  Future<void> sendChatMessage({
+    @required String chatRoomId,
+    @required Map<String, dynamic> messageMap,
+  }) async {
+    await FirebaseFirestore.instance
         .collection('chat_rooms')
         .doc(chatRoomId)
         .collection('messages')

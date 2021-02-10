@@ -83,7 +83,9 @@ class _LoginPageState extends State<LoginPage> {
       resizeToAvoidBottomPadding: false,
       body: _isLoading
           ? Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF03806F)),
+              ),
             )
           : InkWell(
               splashColor: Colors.transparent,
@@ -184,33 +186,38 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       SizedBox(height: 16.0),
-                      Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width,
-                        padding: EdgeInsets.symmetric(vertical: 20.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.only(right: 10.0),
-                              child: Image.asset(
-                                'assets/images/google.png',
-                                height: 20.0,
-                                width: 20.0,
+                      GestureDetector(
+                        onTap: () {
+                          _authMethods.loginWithGoogle(context);
+                        },
+                        child: Container(
+                          alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width,
+                          padding: EdgeInsets.symmetric(vertical: 20.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.only(right: 10.0),
+                                child: Image.asset(
+                                  'assets/images/google.png',
+                                  height: 20.0,
+                                  width: 20.0,
+                                ),
                               ),
-                            ),
-                            Text(
-                              'Sign In with Google',
-                              style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 17.0,
+                              Text(
+                                'Sign In with Google',
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 17.0,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                       SizedBox(height: 22.0),

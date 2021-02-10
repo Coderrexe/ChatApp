@@ -45,7 +45,7 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  void _initChatRoom({@required String username}) {
+  void _initChatRoom({@required String username}) async {
     if (Constants.currentUsername != username) {
       String chatRoomId = _getChatRoomId(username, Constants.currentUsername);
 
@@ -55,7 +55,8 @@ class _SearchPageState extends State<SearchPage> {
         'users': users,
       };
 
-      _databaseMethods.createChatRoom(
+      _databaseMethods
+          .createChatRoom(
         chatRoomId: chatRoomId,
         chatRoomMap: chatRoomMap,
       );
@@ -105,7 +106,7 @@ class _SearchPageState extends State<SearchPage> {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Color(0xFF03806F),
                 borderRadius: BorderRadius.circular(30.0),
               ),
               child: Text(
@@ -252,7 +253,10 @@ class _SearchPageState extends State<SearchPage> {
                 ),
                 SizedBox(height: 50.0),
                 Container(
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Color(0xFF03806F)),
+                  ),
                 ),
               ],
             ),

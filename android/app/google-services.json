@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "704133146553-1n0gea1iqfkm74tk429t6o9klpkl1co9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.simbashi.chat_app",
+            "certificate_hash": "20bfd55d6331276c985b16a0aeb9c6c7f735c4a1"
+          }
+        },
+        {
           "client_id": "704133146553-499n3equn32361ks52k1qttj2ghfus8k.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,13 @@
             {
               "client_id": "704133146553-499n3equn32361ks52k1qttj2ghfus8k.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "704133146553-djblj4aamen150mpmbm8o4jp38vlhnhq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.simbashi.chatApp"
+              }
             }
           ]
         }
