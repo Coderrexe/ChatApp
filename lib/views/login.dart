@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:chat_app/helper/helper_functions.dart';
-import 'package:chat_app/services/database_methods.dart';
 import 'package:chat_app/services/user_authentication.dart';
 import 'package:chat_app/views/chat_rooms.dart';
 import 'package:chat_app/widgets.dart';
@@ -20,57 +17,11 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final AuthMethods _authMethods = AuthMethods();
-  final DatabaseMethods _databaseMethods = DatabaseMethods();
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   bool _isLoading = false;
-
-  void _login() async {
-    if (_formKey.currentState.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-
-      await _authMethods
-          .loginWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      )
-          .then((result) async {
-        if (result != null) {
-          QuerySnapshot userInfoSnapshot =
-              await _databaseMethods.getUserByEmail(
-            email: _emailController.text,
-          );
-
-          SharedPreferencesHelperFunctions.saveIsUserLoggedIn(
-            isUserLoggedIn: true,
-          );
-
-          SharedPreferencesHelperFunctions.saveUsername(
-            username: userInfoSnapshot.docs[0].data()['username'],
-          );
-
-          SharedPreferencesHelperFunctions.saveUserEmail(
-            userEmail: userInfoSnapshot.docs[0].data()['email'],
-          );
-
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChatRooms(),
-            ),
-          );
-        } else {
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +117,31 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(height: 15.0),
                       GestureDetector(
                         onTap: () {
-                          _login();
+                          if (_formKey.currentState.validate()) {
+                            setState(() {
+                              _isLoading = true;
+                            });
+
+                            _authMethods
+                                .loginWithEmailAndPassword(
+                              email: _emailController.text,
+                              password: _passwordController.text,
+                            )
+                                .then((value) {
+                              if (value == 0) {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ChatRooms(),
+                                  ),
+                                );
+                              } else {
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                              }
+                            });
+                          }
                         },
                         child: Container(
                           alignment: Alignment.center,

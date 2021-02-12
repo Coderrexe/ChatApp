@@ -37,7 +37,7 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  String _getChatRoomId(String a, String b) {
+  String _createChatRoomId(String a, String b) {
     if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
       return '$b\_$a';
     } else {
@@ -47,7 +47,8 @@ class _SearchPageState extends State<SearchPage> {
 
   void _initChatRoom({@required String username}) async {
     if (Constants.currentUsername != username) {
-      String chatRoomId = _getChatRoomId(username, Constants.currentUsername);
+      String chatRoomId =
+          _createChatRoomId(username, Constants.currentUsername);
 
       List<String> users = [username, Constants.currentUsername];
       Map<String, dynamic> chatRoomMap = {
@@ -55,8 +56,7 @@ class _SearchPageState extends State<SearchPage> {
         'users': users,
       };
 
-      _databaseMethods
-          .createChatRoom(
+      _databaseMethods.createChatRoom(
         chatRoomId: chatRoomId,
         chatRoomMap: chatRoomMap,
       );
@@ -100,8 +100,25 @@ class _SearchPageState extends State<SearchPage> {
           ),
           Spacer(),
           GestureDetector(
-            onTap: () {
-              _initChatRoom(username: username);
+            onTap: () async {
+              String chatRoomId =
+                  _createChatRoomId(username, Constants.currentUsername);
+              DocumentSnapshot chatRoomDocumentSnapshot =
+                  await FirebaseFirestore.instance
+                      .collection('chat_rooms')
+                      .doc(chatRoomId)
+                      .get();
+
+              if (!chatRoomDocumentSnapshot.exists) {
+                _initChatRoom(username: username);
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChatPage(chatRoomId: chatRoomId),
+                  ),
+                );
+              }
             },
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),

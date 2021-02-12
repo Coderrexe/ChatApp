@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:chat_app/helper/constants.dart';
 import 'package:chat_app/helper/helper_functions.dart';
-import 'package:chat_app/helper/landing.dart';
 import 'package:chat_app/services/database_methods.dart';
 import 'package:chat_app/services/user_authentication.dart';
 import 'package:chat_app/views/chat_page.dart';
@@ -69,16 +68,7 @@ class _ChatRoomsState extends State<ChatRooms> {
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: IconButton(
               onPressed: () async {
-                await _authMethods.logout();
-                SharedPreferencesHelperFunctions.saveIsUserLoggedIn(
-                    isUserLoggedIn: false);
-
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Landing(),
-                  ),
-                );
+                _authMethods.logout(context);
               },
               icon: Icon(Icons.exit_to_app),
             ),

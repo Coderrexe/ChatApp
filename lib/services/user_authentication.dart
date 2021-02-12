@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:chat_app/helper/helper_functions.dart';
-import 'package:chat_app/models/user.dart';
+import 'package:chat_app/helper/landing.dart';
 import 'package:chat_app/services/database_methods.dart';
 import 'package:chat_app/views/chat_rooms.dart';
 
@@ -13,11 +14,7 @@ class AuthMethods {
 
   final DatabaseMethods _databaseMethods = DatabaseMethods();
 
-  ChatAppUser _createChatAppUser({@required User user}) {
-    return ChatAppUser(userId: user.uid);
-  }
-
-  Future<ChatAppUser> loginWithEmailAndPassword({
+  Future<int> loginWithEmailAndPassword({
     @required String email,
     @required String password,
   }) async {
@@ -26,62 +23,72 @@ class AuthMethods {
         email: email,
         password: password,
       );
+
       User firebaseUser = result.user;
-      return _createChatAppUser(user: firebaseUser);
+      QuerySnapshot userInfoSnapshot =
+          await _databaseMethods.getUserByEmail(email: firebaseUser.email);
+
+      SharedPreferencesHelperFunctions.saveIsUserLoggedIn(isUserLoggedIn: true);
+      SharedPreferencesHelperFunctions.saveUsername(
+          username: userInfoSnapshot.docs[0].data()['username']);
+      SharedPreferencesHelperFunctions.saveUserEmail(
+          userEmail: userInfoSnapshot.docs[0].data()['email']);
+
+      return 0;
     } catch (err) {
-      print(err.toString());
-      return null;
+      print(err);
+      return 1;
     }
   }
 
   void loginWithGoogle(BuildContext context) async {
-    try {
-      final GoogleSignInAccount googleSignInAccount =
-      await _googleSignIn.signIn();
+    final GoogleSignInAccount googleSignInAccount =
+        await _googleSignIn.signIn();
 
-      final GoogleSignInAuthentication googleSignInAuthentication =
-      await googleSignInAccount.authentication;
+    if (googleSignInAccount == null) {
+      return;
+    }
 
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        idToken: googleSignInAuthentication.idToken,
-        accessToken: googleSignInAuthentication.accessToken,
-      );
+    final GoogleSignInAuthentication googleSignInAuthentication =
+        await googleSignInAccount.authentication;
 
-      UserCredential result =
-      await _firebaseAuth.signInWithCredential(credential);
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      idToken: googleSignInAuthentication.idToken,
+      accessToken: googleSignInAuthentication.accessToken,
+    );
 
-      User firebaseUser = result.user;
+    UserCredential result =
+        await _firebaseAuth.signInWithCredential(credential);
 
-      if (result != null) {
-        await SharedPreferencesHelperFunctions.saveIsUserLoggedIn(
-            isUserLoggedIn: true);
-        await SharedPreferencesHelperFunctions.saveUserEmail(
-            userEmail: firebaseUser.email);
-        await SharedPreferencesHelperFunctions.saveUsername(
-            username: firebaseUser.displayName);
+    User firebaseUser = result.user;
 
-        Map<String, String> userInfoMap = {
-          'email': firebaseUser.email,
-          'username': firebaseUser.displayName,
-        };
+    if (result != null) {
+      await SharedPreferencesHelperFunctions.saveIsUserLoggedIn(
+          isUserLoggedIn: true);
+      await SharedPreferencesHelperFunctions.saveUserEmail(
+          userEmail: firebaseUser.email);
+      await SharedPreferencesHelperFunctions.saveUsername(
+          username: firebaseUser.displayName);
 
-        await _databaseMethods
-            .uploadUserInfo(userInfo: userInfoMap, userId: firebaseUser.uid)
-            .then((value) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChatRooms(),
-            ),
-          );
-        });
-      }
-    } catch (e) {
-      print(e);
+      Map<String, String> userInfoMap = {
+        'email': firebaseUser.email,
+        'username': firebaseUser.displayName,
+      };
+
+      await _databaseMethods
+          .uploadUserInfo(userInfo: userInfoMap, userId: firebaseUser.uid)
+          .then((value) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatRooms(),
+          ),
+        );
+      });
     }
   }
 
-  Future<ChatAppUser> signupWithEmailAndPassword({
+  Future<int> signupWithEmailAndPassword({
     @required String username,
     @required String email,
     @required String password,
@@ -92,11 +99,28 @@ class AuthMethods {
         email: email,
         password: password,
       );
+
       User firebaseUser = result.user;
-      return _createChatAppUser(user: firebaseUser);
+      Map<String, String> userInfoMap = {
+        'username': username,
+        'email': firebaseUser.email,
+      };
+
+      await _databaseMethods.uploadUserInfo(
+          userInfo: userInfoMap, userId: firebaseUser.uid);
+
+      SharedPreferencesHelperFunctions.saveIsUserLoggedIn(isUserLoggedIn: true);
+
+      SharedPreferencesHelperFunctions.saveUsername(
+          username: username);
+
+      SharedPreferencesHelperFunctions.saveUserEmail(
+          userEmail: firebaseUser.email);
+
+      return 0;
     } catch (err) {
       print(err.toString());
-      return null;
+      return 1;
     }
   }
 
@@ -109,9 +133,19 @@ class AuthMethods {
     }
   }
 
-  Future<void> logout() async {
+  Future<void> logout(BuildContext context) async {
     try {
-      return await _firebaseAuth.signOut();
+      await _firebaseAuth.signOut();
+
+      SharedPreferencesHelperFunctions.saveIsUserLoggedIn(
+          isUserLoggedIn: false);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Landing(),
+        ),
+      );
     } catch (err) {
       print(err.toString());
       return null;
