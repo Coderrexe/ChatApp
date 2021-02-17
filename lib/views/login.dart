@@ -65,11 +65,7 @@ class _LoginPageState extends State<LoginPage> {
                                   r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+"
                                   r"@[a-zA-Z0-9]+\.[a-zA-Z]+",
                                 ).hasMatch(value)) {
-                                  if (value.trim() == value) {
-                                    return null;
-                                  } else {
-                                    return 'Email must not contain spaces';
-                                  }
+                                  return null;
                                 } else if (value.trim().isEmpty) {
                                   return 'Please enter an email';
                                 } else {
@@ -86,9 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                               decoration: textFieldInputDecoration('Password'),
                               obscureText: true,
                               validator: (value) {
-                                if (value.trim().isEmpty && value.isEmpty) {
-                                  return 'Please enter a password';
-                                } else if (value != value.trim()) {
+                                if (value.contains(' ')) {
                                   return 'Password must not contain spaces';
                                 } else if (value.length < 6) {
                                   return 'Password must be longer than 6 '
@@ -124,11 +118,11 @@ class _LoginPageState extends State<LoginPage> {
 
                             _authMethods
                                 .loginWithEmailAndPassword(
-                              email: _emailController.text,
+                              email: _emailController.text.trim(),
                               password: _passwordController.text,
                             )
-                                .then((value) {
-                              if (value == 0) {
+                                .then((user) {
+                              if (user != null) {
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
@@ -163,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(height: 16.0),
                       GestureDetector(
                         onTap: () {
-                          _authMethods.loginWithGoogle(context);
+                          _authMethods.loginWithGoogle();
                         },
                         child: Container(
                           alignment: Alignment.center,

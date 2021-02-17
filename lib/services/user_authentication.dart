@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:chat_app/helper/helper_functions.dart';
-import 'package:chat_app/helper/landing.dart';
 import 'package:chat_app/services/database_methods.dart';
-import 'package:chat_app/views/chat_rooms.dart';
 
 class AuthMethods {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   final DatabaseMethods _databaseMethods = DatabaseMethods();
 
-  Future<int> loginWithEmailAndPassword({
+  Future<User> loginWithEmailAndPassword({
     @required String email,
     @required String password,
   }) async {
@@ -25,28 +21,26 @@ class AuthMethods {
       );
 
       User firebaseUser = result.user;
-      QuerySnapshot userInfoSnapshot =
-          await _databaseMethods.getUserByEmail(email: firebaseUser.email);
 
       SharedPreferencesHelperFunctions.saveIsUserLoggedIn(isUserLoggedIn: true);
       SharedPreferencesHelperFunctions.saveUsername(
-          username: userInfoSnapshot.docs[0].data()['username']);
+          username: firebaseUser.displayName);
       SharedPreferencesHelperFunctions.saveUserEmail(
-          userEmail: userInfoSnapshot.docs[0].data()['email']);
+          userEmail: firebaseUser.email);
 
-      return 0;
+      return firebaseUser;
     } catch (err) {
       print(err);
-      return 1;
+      return null;
     }
   }
 
-  void loginWithGoogle(BuildContext context) async {
+  Future<User> loginWithGoogle() async {
     final GoogleSignInAccount googleSignInAccount =
-        await _googleSignIn.signIn();
+        await GoogleSignIn().signIn();
 
     if (googleSignInAccount == null) {
-      return;
+      return null;
     }
 
     final GoogleSignInAuthentication googleSignInAuthentication =
@@ -71,24 +65,18 @@ class AuthMethods {
           username: firebaseUser.displayName);
 
       Map<String, String> userInfoMap = {
+        'userID': firebaseUser.uid,
         'email': firebaseUser.email,
         'username': firebaseUser.displayName,
       };
 
-      await _databaseMethods
-          .uploadUserInfo(userInfo: userInfoMap, userId: firebaseUser.uid)
-          .then((value) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatRooms(),
-          ),
-        );
-      });
+      await _databaseMethods.uploadUserInfo(userInfo: userInfoMap);
+      return firebaseUser;
     }
+    return null;
   }
 
-  Future<int> signupWithEmailAndPassword({
+  Future<User> signupWithEmailAndPassword({
     @required String username,
     @required String email,
     @required String password,
@@ -102,25 +90,22 @@ class AuthMethods {
 
       User firebaseUser = result.user;
       Map<String, String> userInfoMap = {
+        'userID': firebaseUser.uid,
         'username': username,
         'email': firebaseUser.email,
       };
 
-      await _databaseMethods.uploadUserInfo(
-          userInfo: userInfoMap, userId: firebaseUser.uid);
+      await _databaseMethods.uploadUserInfo(userInfo: userInfoMap);
 
       SharedPreferencesHelperFunctions.saveIsUserLoggedIn(isUserLoggedIn: true);
-
-      SharedPreferencesHelperFunctions.saveUsername(
-          username: username);
-
+      SharedPreferencesHelperFunctions.saveUsername(username: username);
       SharedPreferencesHelperFunctions.saveUserEmail(
           userEmail: firebaseUser.email);
 
-      return 0;
+      return firebaseUser;
     } catch (err) {
       print(err.toString());
-      return 1;
+      return null;
     }
   }
 
@@ -133,19 +118,11 @@ class AuthMethods {
     }
   }
 
-  Future<void> logout(BuildContext context) async {
+  Future<void> logout() async {
     try {
       await _firebaseAuth.signOut();
-
       SharedPreferencesHelperFunctions.saveIsUserLoggedIn(
           isUserLoggedIn: false);
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Landing(),
-        ),
-      );
     } catch (err) {
       print(err.toString());
       return null;

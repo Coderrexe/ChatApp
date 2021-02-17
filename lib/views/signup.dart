@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:chat_app/services/full_text_search.dart';
 import 'package:chat_app/services/user_authentication.dart';
 import 'package:chat_app/views/chat_rooms.dart';
 import 'package:chat_app/widgets.dart';
@@ -17,6 +18,7 @@ class _SignupPageState extends State<SignupPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final AuthMethods _authMethods = AuthMethods();
+  final FullTextSearch _fullTextSearch = FullTextSearch();
 
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -62,12 +64,10 @@ class _SignupPageState extends State<SignupPage> {
                               style: TextStyle(color: Colors.white),
                               decoration: textFieldInputDecoration('Username'),
                               validator: (value) {
-                                if (value.trim().isEmpty && value.isEmpty) {
-                                  return 'Please enter a username';
-                                } else if (value.length < 2) {
-                                  return 'This username is too short';
+                                if (value.length < 2) {
+                                  return 'This username is too short.';
                                 } else if (value.length > 30) {
-                                  return 'This username is too long';
+                                  return 'This username is too long.';
                                 } else {
                                   return null;
                                 }
@@ -85,11 +85,7 @@ class _SignupPageState extends State<SignupPage> {
                                   r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+"
                                   r"@[a-zA-Z0-9]+\.[a-zA-Z]+",
                                 ).hasMatch(value)) {
-                                  if (value.trim() == value) {
-                                    return null;
-                                  } else {
-                                    return 'Email must not contain spaces';
-                                  }
+                                  return null;
                                 } else if (value.trim().isEmpty) {
                                   return 'Please enter an email';
                                 } else {
@@ -106,9 +102,7 @@ class _SignupPageState extends State<SignupPage> {
                               decoration: textFieldInputDecoration('Password'),
                               obscureText: true,
                               validator: (value) {
-                                if (value.trim().isEmpty && value.isEmpty) {
-                                  return 'Please enter a password';
-                                } else if (value != value.trim()) {
+                                if (value.contains(' ')) {
                                   return 'Password must not contain spaces';
                                 } else if (value.length < 6) {
                                   return 'Password must be longer than 6 '
@@ -144,12 +138,16 @@ class _SignupPageState extends State<SignupPage> {
 
                             _authMethods
                                 .signupWithEmailAndPassword(
-                              username: _usernameController.text,
-                              email: _emailController.text,
+                              username: _usernameController.text.trim(),
+                              email: _emailController.text.trim(),
                               password: _passwordController.text,
                             )
-                                .then((value) async {
-                              if (value == 0) {
+                                .then((user) async {
+                              if (user != null) {
+                                _fullTextSearch.uploadUsersSearchIndices(
+                                  username: user.displayName,
+                                );
+
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
@@ -183,8 +181,21 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                       SizedBox(height: 16.0),
                       GestureDetector(
-                        onTap: () async {
-                          _authMethods.loginWithGoogle(context);
+                        onTap: () {
+                          _authMethods.loginWithGoogle().then((firebaseUser) {
+                            if (firebaseUser != null) {
+                              _fullTextSearch.uploadUsersSearchIndices(
+                                username: firebaseUser.displayName,
+                              );
+
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatRooms(),
+                                ),
+                              );
+                            }
+                          });
                         },
                         child: Container(
                           alignment: Alignment.center,

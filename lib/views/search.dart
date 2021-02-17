@@ -25,9 +25,10 @@ class _SearchPageState extends State<SearchPage> {
       setState(() {
         _isLoading = true;
       });
-      await Future.delayed(Duration(milliseconds: 200));
+
       await _databaseMethods
-          .getUserByUsername(username: _searchController.text)
+          .getUserBySearchQuery(
+              searchQuery: _searchController.text.toLowerCase())
           .then((snapshot) {
         setState(() {
           _searchSnapshot = snapshot;
@@ -180,6 +181,10 @@ class _SearchPageState extends State<SearchPage> {
                       Expanded(
                         child: TextField(
                           controller: _searchController,
+                          onChanged: (value) {
+                            _searchButtonClicked = true;
+                            _initSearch();
+                          },
                           style: TextStyle(
                             color: Colors.white,
                           ),

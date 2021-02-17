@@ -2,13 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseMethods {
-  Future<void> uploadUserInfo({
-    @required Map<String, String> userInfo,
-    @required String userId,
-  }) async {
+  Future<void> uploadUserInfo({@required Map<String, String> userInfo}) async {
     await FirebaseFirestore.instance
         .collection('users')
-        .doc(userId)
+        .doc(userInfo['username'])
         .set(userInfo);
   }
 
@@ -23,6 +20,14 @@ class DatabaseMethods {
     return await FirebaseFirestore.instance
         .collection('users')
         .where('email', isEqualTo: email)
+        .get();
+  }
+
+  Future<QuerySnapshot> getUserBySearchQuery(
+      {@required String searchQuery}) async {
+    return await FirebaseFirestore.instance
+        .collection('users')
+        .where('z_searchIndices', arrayContains: searchQuery)
         .get();
   }
 
